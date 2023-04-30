@@ -1,6 +1,9 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { useEffect, useState } from "react";
+
+
+
 
 
 export function HomeScreen(props) {
@@ -22,6 +25,29 @@ export function HomeScreen(props) {
     setShowModal( false )
     const expenseObj = {expenseDate: expenseDate, location: location, expenseFor: expenseFor, amount: amount}
     props.add(expenseObj)
+  }
+
+  const ListClickHandler = (data) =>{
+    navigation.navigate("Expense Detail", data)
+  }
+
+  const ListItem = ( props ) => {
+    return (
+      <View>
+        <TouchableOpacity onPress={() => ListClickHandler({id: props.id, expenseFor: props.expenseFor, location: props.location, amount: props.amount, expenseDate: props.expenseDate })}>
+          <Text>{props.expenseDate}</Text>
+        </TouchableOpacity>
+        <Text>{props.location}</Text>
+        <Text>{props.amount}</Text>
+        <Text>{props.expenseFor}</Text>
+      </View>
+    )
+  }
+
+  const ListItemSparator =  ( props ) => {
+    return(
+      <View></View>
+    )
   }
 
   return (
@@ -77,6 +103,13 @@ export function HomeScreen(props) {
       <TouchableOpacity onPress={() => setShowModal(true)}>
         <Text>Add Expense</Text>
       </TouchableOpacity>
+
+      <FlatList 
+        data = {props.data}
+        renderItem={({item}) => (<ListItem expenseDate={item.expenseDate} id={item.id} location={item.location} expenseFor={item.expenseFor} amount={item.amount}/>)}
+        keyExtractor={item => item.id}
+        ItemSeparatorComponent={ListItemSparator}
+      /> 
     </View>
   )
 } 
